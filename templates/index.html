@@ -1,1 +1,46 @@
-<h1>MicroBot</h1>
+<head>
+    <title>Microbot</title>
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css'>
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css'>
+    <link rel='stylesheet' href='/static/style.css'>
+</head>
+<body>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="/static/chat.js"></script>
+<div class="container has-text-centered	">
+    <h1 class="title has-text-weight-light"><span class="has-text-info	">Micro</span>Bot</h1>
+  
+  <div class="box has-background-grey	has-text-left" id="main-box">
+      <div class="box" id="chatbox">
+        <div class="dropdown is-left">
+    <div class="dropdown-trigger">
+      <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
+        <span>Personality</span>
+        <span class="icon is-small">
+          <i class="fas fa-angle-down" aria-hidden="true"></i>
+        </span>
+      </button>
+    </div>
+    <div class="dropdown-menu" id="dropdown-menu" role="menu">
+      <div class="dropdown-content">
+        <a class="dropdown-item is-active">
+          friend
+        </a>
+        <a class="dropdown-item">
+          comic
+        </a>
+        <a class="dropdown-item">
+          professional
+        </a>
+      </div>
+    </div>
+  </div>
+        <ul id="history">
+        </ul>
+    </div>
+    <div>
+        <input class="input" type="text" placeholder="Type here to chat!">
+      </div>
+  </div>
+  </div>
+</body>

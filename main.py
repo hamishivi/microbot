@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from starlette.requests import Request
@@ -28,7 +29,7 @@ class Message(BaseModel):
 @app.post("/chat")
 async def send_message(message: Message):
   if 'sess' not in items or 'wv_model' not in items or 'models' not in items or 'answer_sets' not in items:
-    raise HTTPException(status_code=500, detail="Server Error.")
+    raise HTTPException(status_code=500, detail="Server Error - chatbot couldn't load!")
   if not (message.mode == 'friend' or message.mode == 'professional' or message.mode == 'comic'):
     raise HTTPException(status_code=400, detail="Mode can only be 'friend', 'professional', or 'comic'.")
   return {"answer": get_response(items['sess'], items['wv_model'], items['models'], items['answer_sets'], message.message, message.mode)}
