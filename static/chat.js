@@ -21,16 +21,16 @@ $(document).ready(function() {
   // keeps scroll bar at bottom of div when text
   // is being added
   function updateScroll(){
-      var element = document.getElementById("chatbox");
-      element.scrollTop = element.scrollHeight;
+    var element = document.getElementById("chatbox");
+    element.scrollTop = element.scrollHeight;
   }
 
   $('.input').on("keypress", function(e) {
-          if (e.keyCode == 13 && e.target.value !== '') {
-            get_response(e.target.value);
-            updateScroll();
-            return false;
-          }
+    if (e.keyCode == 13 && e.target.value !== '') {
+      get_response(e.target.value);
+      updateScroll();
+      return false;
+    }
   });
 
   $('.dropdown-trigger').click(function() {
