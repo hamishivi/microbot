@@ -26,7 +26,7 @@ $(document).ready(function() {
   }
 
   $('.input').on("keypress", function(e) {
-          if (e.keyCode == 13) && e.target.value !== '') {
+          if (e.keyCode == 13 && e.target.value !== '') {
             get_response(e.target.value);
             updateScroll();
             return false;
