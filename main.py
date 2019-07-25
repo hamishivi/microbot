@@ -18,6 +18,7 @@ items = {}
 @app.on_event("startup")
 def load_model():
   items['sess'], items['wv_model'], items['models'], items['answer_sets'] = load_chatbot()
+  print("Chatbot has started.", flush=True)
 
 class Message(BaseModel):
     message: str

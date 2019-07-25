@@ -2,8 +2,7 @@ import pandas as pd
 import nltk
 import tensorflow as tf
 import numpy as np
-from gensim.models import FastText
-from gensim.models.callbacks import CallbackAny2Vec
+from pymagnitude import Magnitude
 
 nltk.download('punkt')
 
@@ -26,9 +25,23 @@ def preprocess_data(df):
     token_sents += [['_p_', '_u_']]
   return seq_data, token_sents
 
+
+# HACK! to make this behave like gensim
+class Vect(object):  
+  def __init__(self, magvecs):
+    self.mag = magvecs
+
+  def __getitem__(self, word):
+        return self.mag.query(word)
+    
+class WVModel(object):
+  def __init__(self, magvecs):
+    self.wv = Vect(magvecs)
+
 def load_wv_model():
-  # nice and easy with gensim
-  return FastText.load("data/word_embeddings.model")
+  # nice and easy with pymagnitude
+  vecs = Magnitude('fasttext/heavy/crawl-300d-2M.magnitude', stream=True)
+  return WVModel(vecs)
 
 # util for dealing with OOV
 def get_vector(word, model):
@@ -57,14 +70,11 @@ def answer_to_index(answer, answer_set):
     if a == answer:
       return i
     
-def make_batch(seq_data, wv_model, max_q_length=None, answer_set=None):
+def make_batch(seq_data, wv_model, max_q_length=101, answer_set=None):
     input_batch = []
     output_batch = []
     target_batch = []
     
-    # the maximum length of any question, required for padding
-    if max_q_length is None:
-      max_q_length = max([len(seq[0]) for seq in seq_data])
     # the list of possible unique answers
     # we must sort since set gives non-deterministic ordering
     if answer_set is None:
@@ -162,22 +172,15 @@ def build_seq2seq_model(model_name, n_input, n_output, lr=0.001, n_hidden=256):
     }
 
     return output_dict
-  
-def train(sess, total_epochs, feed_dict, optimizer, cost):
-  for epoch in range(total_epochs):
-      
-    _, loss = sess.run([optimizer, cost], feed_dict=feed_dict)
-    
-    print('Epoch:', '%04d' % (epoch + 1), 'cost =', '{:.6f}'.format(loss))
-  print('Training completed')
 
-def load_seq2seq_model(output_batch_c, output_batch_f, output_batch_p):
+def load_seq2seq_model():
   tf.reset_default_graph()
   input_size = 300
   # get output sizes for each model
-  output_size_comic = len(output_batch_c[0][0])
-  output_size_friend = len(output_batch_f[0][0])
-  output_size_professional = len(output_batch_p[0][0])
+  # hardcoding for speed
+  output_size_comic = 101
+  output_size_friend = 101
+  output_size_professional = 101
   # build our models
   comic_model = build_seq2seq_model("comic", input_size, output_size_comic)
   friend_model = build_seq2seq_model("friend", input_size, output_size_friend)
@@ -234,46 +237,6 @@ def get_response(sess, wv_model, models, answer_sets, question, mode):
     answer_set = answer_sets[2]
   return answer(sess, question, wv_model, seq_model, answer_set)
 
-# deprecated: we're using an API aproach so a bit diff
-def log_print(f, string):
-  f.write(string + '\n')
-  print(string)
-
-def chat(log_name, sess, wv_model, models, answer_sets):
-  # default session is friend
-  mode = "friend"
-  seq_model = models[1]
-  answer_set = answer_sets[1]
-  with open(log_name, 'w') as f:
-    while True:
-      question = input("You: ")
-      f.write(f"You: {question}\n")
-      if question[:13] == "!personality ":
-        if question[13:] == "comic":
-          log_print(f, "Switched to comic personality!")
-          mode = "comic"
-          seq_model = models[0]
-          answer_set = answer_sets[0]
-        elif question[13:] == "friend":
-          log_print(f, "Switched to friend personality!")
-          mode = "friend"
-          seq_model = models[1]
-          answer_set = answer_sets[1]
-        elif question[13:] == "professional":
-          log_print(f, "Switched to professional personality!")
-          mode = "professional"
-          seq_model = models[2]
-          answer_set = answer_sets[2]
-        else:
-          log_print(f, "You entered an invalid personality. The only options are 'comic', 'personality', or 'friend'.")
-        continue
-      elif question.lower() == "!end":
-        log_print(f, "Ended conversation.")
-        return
-          
-      ans = answer(sess, question, wv_model, seq_model, answer_set)
-      log_print(f, f"Chatbot: {ans}")
-      
 def load_chatbot():
   # load data in dataframes
   df_comic = pd.read_csv('data/qna_chitchat_the_comic.tsv', sep="\t")
@@ -288,12 +251,8 @@ def load_chatbot():
   # load word embedding model
   wv_model = load_wv_model()
   
-  # setup for seq2seq model
-  _, output_batch_c, _ = make_batch(seq_data_comic, wv_model.wv)
-  _, output_batch_f, _ = make_batch(seq_data_friend, wv_model.wv)
-  _, output_batch_p, _ = make_batch(seq_data_prof, wv_model.wv)
-  
-  models, sess = load_seq2seq_model(output_batch_c, output_batch_f, output_batch_p)
+  # setup model
+  models, sess = load_seq2seq_model()
 
   # sort our answer lists for each model to avoid set() non-determinism
   # this makes the seq_data match the preprocessing that happens in make_batch

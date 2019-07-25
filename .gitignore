@@ -4,3 +4,8 @@ __pycache__
 .vscode
 .pytest_cache/
 *.json
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml

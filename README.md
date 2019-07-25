@@ -1,16 +1,18 @@
 # MicroBot
 
+This is live [here](https://microbotchat.herokuapp.com/), if you want to try it out!
+
 A simple chatbot site, based off some work I did for a university course at the university of Sydney. We had to code up and train a simple chatbot on the microsoft dialogues corpus (available [here](https://github.com/microsoft/BotBuilder-PersonalityChat/tree/master/CSharp/Datasets)). Since the responses are pre-defined, this chatbot is essentially learning how to take user input and find the most relevant response from a list of responses. Although this means it is somewhat inflexible, it does result in some amusing conversations!
 
  The assignment itself involved testing and evaluating a few models, and writing up results, but this codebase more functions as an interactive demo of my final model. This model uses a simple Bahdanau attention mechanism with GRU encoders - it's fairly basic. I know it's using a lot of old tensorflow functions - I'll fix this up... sometime...
 
-To run this locally, you'll need the data and word models I used, placed in a folder called 'data'. You can download these from my google drive [here](https://drive.google.com/drive/folders/1fJUjsJ-Swg3GGbxok7GOcj4RLo4S9d1G?usp=sharing) (The folder contains both a word vector model I traineds, and the chatbot model - both are required for my code). After that, install the required python modules (using ```pip install -r requirements.txt```) and run:
+To run this locally, you'll need the data and word models I used, placed in a folder called 'data'. You can download these from my google drive [here](https://drive.google.com/drive/folders/1fJUjsJ-Swg3GGbxok7GOcj4RLo4S9d1G?usp=sharing) (The folder contains both a word vector model I traineds, and the chatbot model - only the chatbot model is required for my code). After that, install the required python modules (using ```pip install -r requirements.txt```) and run:
 
 ```
 uvicorn main:app --lifespan on
 ```
 
-This starts the server, at port 8000 by default. You can specify a port with the ```--port``` flag. There's only one page, so then just go to ```localhost:8000``` and you can start chatting!
+This starts the server, at port 8000 by default. You can specify a port with the ```--port``` flag. There's only one page, so then just go to ```localhost:8000``` and you can start chatting! Note that speed will be reliant on your web connection - I'm using pymagnitude's streaming word vectors, which means every message will require downloading the appropriate vectors (this shouldn't be an issue on a decently fast connection).
 
 Here's what it looks like in action:
 
