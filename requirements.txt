@@ -71,7 +71,7 @@ tensorflow-estimator==1.14.0
 termcolor==1.1.0
 torch==0.4.1
 urllib3==1.25.3
-uvicorn==0.8.3
+uvicorn==0.11.7
 uvloop==0.12.2
 wcwidth==0.1.7
 websockets==7.0
