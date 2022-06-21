@@ -42,7 +42,7 @@ mccabe==0.6.1
 monotonic==1.5
 more-itertools==7.1.0
 nltk==3.4.5
-numpy==1.16.4
+numpy==1.22.0
 packaging==19.0
 pandas==0.24.2
 pluggy==0.12.0
